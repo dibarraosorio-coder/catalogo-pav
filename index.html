@@ -998,9 +998,9 @@
             <button class="modal-close" onclick="closeChangelogModal()" title="Cerrar">✕</button>
             <h2 class="modal-desc-large" style="margin-bottom: 24px;">Últimas Mejoras</h2>
             <ul class="changelog-list">
-                <li><strong>Catálogo 100% Real (NUEVO):</strong> El sistema respeta el ERP. Si el producto existe, se muestra en el catálogo (incluso si el stock es 0) para asegurar la transparencia.</li>
-                <li><strong>Regla Estricta de Imágenes (NUEVO):</strong> Si un producto tiene Stock Cero y no cuenta con fotografía, se ocultará completamente de la pantalla. Si tiene Stock (mayor a 0) pero aún no le subes foto, mostrará el sello "IMAGEN EN PREPARACIÓN".</li>
-                <li><strong>Múltiples Paletas de Color:</strong> Hemos añadido nuevas paletas en tonos pastel sumadas a los clásicos Día y Noche.</li>
+                <li><strong>Anti-Bloqueos (Rate Limit):</strong> Se eliminaron las múltiples peticiones simultáneas que causaban que GitHub bloqueara tu IP con el error "Rate limit exceeded".</li>
+                <li><strong>Botón Limpiar Restaurado:</strong> El botón "Limpiar" vuelve a servir como escáner. Al presionarlo, le dice al navegador que vuelva a buscar si subiste imágenes nuevas.</li>
+                <li><strong>Lógica Estricta de Fotos:</strong> Si un producto tiene Stock 0 y no tiene foto, se oculta completamente. Si tiene Stock (mayor a 0) pero aún no le subes foto, mostrará el sello "IMAGEN EN PREPARACIÓN".</li>
             </ul>
         </div>
     </div>
@@ -1177,7 +1177,7 @@ function isExactMatch(text, query) {
 }
 
 // =========================================================================
-// LA REGLA EXACTA DE IMÁGENES Y STOCK (Sin Cachés que Bloqueen)
+// LA REGLA EXACTA DE IMÁGENES Y STOCK (Sin cascada de errores 404)
 // =========================================================================
 
 window.checkScroll = function() {
@@ -1212,14 +1212,14 @@ window.handleImageFallback = function(imgEl, codigo, qty) {
     }
 
     if (qty === 0) {
-        // REGLA: Stock 0 Y Sin Foto -> Se oculta completamente el producto
+        // REGLA 1: Stock 0 Y Sin Foto -> Se oculta completamente el producto del muro
         const card = imgEl.closest('.product-card');
         if (card) {
             card.remove();
             setTimeout(window.checkScroll, 150);
         }
     } else {
-        // REGLA: Stock > 0 Y Sin Foto -> Se muestra Logo Translúcido + "IMAGEN EN PREPARACIÓN"
+        // REGLA 2: Stock > 0 Y Sin Foto -> Se muestra el Logo Translúcido + Letrero
         imgEl.src = 'img/LOGO.png';
         imgEl.className = 'loaded no-photo-placeholder';
         
@@ -1288,7 +1288,7 @@ function renderRecentHistory() {
         const p = products.find(x => x.codigo === code);
         if (!p) return false;
         const total = (p.cantidad || 0) + (p.cantidadPCO || 0);
-        // Si no tiene foto y el stock es 0, no lo mostramos ni en el historial
+        // Si no tiene foto y el stock es 0, no lo mostramos en el historial
         if (window.invalidImageCodes.has(code) && total === 0) return false;
         return true;
     });
@@ -1432,13 +1432,12 @@ function toggleTheme() {
 document.addEventListener('DOMContentLoaded', async () => {
   iniciarCargadorInteractivo();
   
-  // Limpiamos los cachés locos de la versión anterior.
-  if (!safeGetLocal('cache_purge_v4')) {
+  // Limpiamos los cachés locos de la versión anterior que ocasionaron el bloqueo de red
+  if (!safeGetLocal('cache_purge_v5')) {
       safeRemoveLocal('missingImagesCache');
-      safeSetLocal('cache_purge_v4', 'true');
+      safeSetLocal('cache_purge_v5', 'true');
   }
 
-  // Cargamos la lista de fotos que ya sabemos que no están (estará limpia la primera vez)
   let missing = JSON.parse(safeGetLocal('missingImagesCache') || '[]');
   missing.forEach(c => window.invalidImageCodes.add(c));
   
@@ -1511,7 +1510,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   setupCustomDropdowns();
   
-  // SINCRONIZACIÓN ORIGINAL REPARADA (CONEXIÓN DIRECTA EN VIVO)
+  // SINCRONIZACIÓN DIRECTA EN VIVO
   await sincronizarERP();
   
   renderLastUpdated(); 
@@ -1626,7 +1625,6 @@ async function sincronizarERP() {
   try {
     let pcoData = {};
     
-    // 1. Conexión Directa a Bodega PCO
     try {
         let pcoRes = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vRvOH3xHFkBQ-BzvfRUi5rdXDT9pZOlgUXgvPFEpnyxphL5d282gGaEwm1_HggiW3iumBmhFTdEVQcr/pub?output=csv");
         if (pcoRes.ok) {
@@ -1649,7 +1647,6 @@ async function sincronizarERP() {
         }
     } catch(e) { console.error("Error PCO:", e); }
 
-    // 2. Conexión Directa a Planes y Valores
     try {
       const valRes = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vRvOH3xHFkBQ-BzvfRUi5rdXDT9pZOlgUXgvPFEpnyxphL5d282gGaEwm1_HggiW3iumBmhFTdEVQcr/pub?gid=1192465732&single=true&output=csv");
       if (valRes.ok) {
@@ -1675,7 +1672,6 @@ async function sincronizarERP() {
       }
     } catch(e) { console.error("Error Extra:", e); }
 
-    // 3. Conexión Directa a ERP (Power Automate)
     try {
         const response = await fetch(URL_POWER_AUTOMATE);
         if (response.ok) {
@@ -1748,14 +1744,6 @@ function updateGridDOM(append) {
   let filtered = products.filter(p => {
     if(!p || !isValidCode(p.codigo) || EXCLUDED_CODES.includes(String(p.codigo).toUpperCase())) return false; 
 
-    const pavQty = p.cantidad || 0;
-    const pcoQty = p.cantidadPCO || 0;
-    const totalQty = pavQty + pcoQty;
-
-    // LA REGLA DE ORO EXACTA DE TU PROCESO:
-    // Si sabemos que NO tiene foto en GitHub Y su stock es 0, no lo mostramos.
-    if (window.invalidImageCodes.has(p.codigo) && totalQty === 0) return false;
-
     let cat = normalizeStr(getCategory(p.codigo).label); let filterVal = normalizeStr(catVal);
     if (catVal !== 'all' && cat !== filterVal && cat !== filterVal + 's') return false; 
     
@@ -1764,8 +1752,11 @@ function updateGridDOM(append) {
       let fullText = normalizeStr(p.codigo) + " " + (p.descripcion ? normalizeStr(p.descripcion) : ""); 
       if (!isExactMatch(fullText, q)) return false; 
     }
+
+    const pavQty = p.cantidad || 0;
+    const pcoQty = p.cantidadPCO || 0;
+    const totalQty = pavQty + pcoQty;
     
-    // FILTROS DE STOCK NORMALES (Ignorados si el usuario busca algo con "0")
     if (bodegaVal === 'pav') {
         if (currentStockFilter === 'with' && pavQty === 0) return false;
         if (currentStockFilter === 'without' && pavQty > 0) return false;
@@ -1834,8 +1825,6 @@ function updateGridDOM(append) {
     let imgClass = '';
     let prepLabelHTML = '';
 
-    // Si ya sabemos de antemano que la imagen no existe en GitHub, pero pasó el filtro
-    // (porque su stock es mayor a 0), le armamos el diseño directamente sin hacer peticiones a la red.
     if (window.invalidImageCodes.has(p.codigo)) {
         imgSrc = 'img/LOGO.png';
         fallbackAttr = ''; 
@@ -1891,7 +1880,6 @@ function updateGridDOM(append) {
   
   updateCompareUI();
   
-  // Revisamos si la cantidad inicial de tarjetas alcanzó para llenar la pantalla
   setTimeout(window.checkScroll, 300);
 }
 
@@ -1973,11 +1961,11 @@ function renderModalData(p) {
   const imgWrap = document.getElementById('modalImgSection');
   const imgEl = document.getElementById('modalProductImg');
   if (imgEl) {
-      if (imgWrap) imgWrap.classList.add('skeleton'); // Skeleton modal
+      if (imgWrap) imgWrap.classList.add('skeleton'); 
       
       imgEl.style.filter = 'none';
       imgEl.style.transform = 'none';
-      imgEl.style.opacity = '0'; // Ocultar mientras carga
+      imgEl.style.opacity = '0'; 
       
       imgEl.src = `img_sin_fondo/${p.codigo}.png`;
       imgEl.onload = function() {
