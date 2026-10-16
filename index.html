@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cinzel:wght@400;500;600&family=Dancing+Script:wght@400;500&family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,800&family=Nunito+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
   <style>
     /* =========================================
-       SISTEMA DE TEMAS (5 PALETAS)
+       SISTEMA DE TEMAS (6 PALETAS)
        ========================================= */
        
     /* 1. PALETA NOCHE (Verde Ftalo / Original) - Por defecto */
@@ -93,7 +93,47 @@
       --accent-gold: #AE8A77;
     }
 
-    /* 3. PALETA PASTEL GRIS */
+    /* 3. PALETA VERDE PASTEL (Inspirada en Entrega de Uniforme y EPP) */
+    body.theme-green {
+      --bg-body: #EEF6F0;
+      --bg-gradient: linear-gradient(145deg, #F2F8F4 0%, #E3EFE7 100%);
+      --header-bg: #E3EFE7;
+      --header-bg-solid: rgba(227, 239, 231, 0.95);
+      --header-title: #14452F;
+      --header-shadow: none;
+      --text-main: #1B4D3E;
+      --text-muted: #3B6E5C;
+      --text-code: #15803D;
+      --glass-bg: rgba(227, 239, 231, 0.7);
+      --glass-border: #B7D7C2;
+      --glass-shadow: 0 4px 6px -1px rgba(20, 69, 47, 0.08), 0 2px 4px -1px rgba(20, 69, 47, 0.05);
+      --glass-shadow-hover: 0 20px 25px -5px rgba(20, 69, 47, 0.15), 0 10px 10px -5px rgba(20, 69, 47, 0.1);
+      --card-bg: #FFFFFF;
+      --card-border-hover: #68B288;
+      --card-img-border: #E3EFE7;
+      --card-overlay: rgba(238, 246, 240, 0.75);
+      --input-bg: #F7FBF8;
+      --input-border: #B7D7C2;
+      --tab-bg: #E3EFE7;
+      --tab-active-bg: #B7D7C2;
+      --tab-active-color: #14452F;
+      --tab-active-border: #68B288;
+      --tab-hover-bg: #EEF6F0;
+      --btn-bg: #FFFFFF;
+      --btn-hover: #CDE4D5;
+      --btn-text: #14452F;
+      --modal-bg: #EEF6F0;
+      --modal-overlay: rgba(20, 69, 47, 0.75);
+      --modal-info-bg: #E3EFE7;
+      --modal-close-bg: #FFFFFF;
+      --modal-close-hover: #EF4444;
+      --stock-online: #10B981;
+      --neon-yellow: #D97706;
+      --neon-red: #DC2626;
+      --accent-gold: #1D6344;
+    }
+
+    /* 4. PALETA PASTEL GRIS */
     body.theme-gray {
       --bg-body: #F4F5F6;
       --bg-gradient: linear-gradient(145deg, #F4F5F6 0%, #E5E7EB 100%);
@@ -133,7 +173,7 @@
       --accent-gold: #4B5563;
     }
 
-    /* 4. PALETA PASTEL AZUL */
+    /* 5. PALETA PASTEL AZUL */
     body.theme-blue {
       --bg-body: #F0F9FF;
       --bg-gradient: linear-gradient(145deg, #F0F9FF 0%, #E0F2FE 100%);
@@ -173,7 +213,7 @@
       --accent-gold: #0284C7;
     }
 
-    /* 5. PALETA PASTEL ROSA */
+    /* 6. PALETA PASTEL ROSA */
     body.theme-pink {
       --bg-body: #FDF2F8;
       --bg-gradient: linear-gradient(145deg, #FDF2F8 0%, #FCE7F3 100%);
@@ -270,10 +310,11 @@
       pointer-events: none; z-index: 0;
     }
 
-    /* HEADER CON TEXTURA, TÍTULO ANIMADO Y FIRMA AJUSTADA */
+    /* HEADER CON LOGO A LA IZQUIERDA, TÍTULO CENTRADO Y FIRMA */
     header { 
-      position: relative; text-align: center; padding: 40px 24px 20px; 
+      position: relative; text-align: center; padding: 36px 220px 24px; 
       background: var(--header-bg); z-index: 1; transition: background 0.3s ease; overflow: hidden;
+      min-height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
     header::before {
       content: ''; position: absolute; inset: 0;
@@ -282,10 +323,15 @@
     }
     header::after { 
       content: 'Creado por Diego Ibarra'; font-family: 'Dancing Script', cursive; 
-      font-size: .85rem; color: var(--accent-gold); opacity: 0.8; display: block; margin-top: 16px; position: relative; z-index: 1;
+      font-size: .85rem; color: var(--accent-gold); opacity: 0.8; display: block; margin-top: 12px; position: relative; z-index: 1;
     }
     
-    .header-status-wrapper { position: absolute; top: 18px; right: 24px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10; }
+    .header-logo { 
+      position: absolute; left: 36px; top: 50%; transform: translateY(-50%);
+      max-height: 76px; width: auto; cursor: default; z-index: 10; object-fit: contain;
+    }
+
+    .header-status-wrapper { position: absolute; top: 50%; transform: translateY(-50%); right: 32px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10; }
     .last-updated { 
       position: relative; font-family: 'Nunito', sans-serif; 
       font-size: .68rem; color: var(--text-muted); letter-spacing: .10em; text-transform: uppercase; 
@@ -296,19 +342,17 @@
       text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; text-decoration: underline; text-decoration-color: var(--glass-border); text-underline-offset: 3px; transition: all 0.2s;
     }
     .changelog-btn:hover { color: var(--accent-gold); text-decoration-color: var(--accent-gold); }
-
-    .header-logo { max-height: 72px; width: auto; margin-bottom: 12px; cursor: default; position: relative; z-index: 1;}
     
     @keyframes titleReveal { 0% { opacity: 0; letter-spacing: 0em; transform: translateY(10px); } 100% { opacity: 1; letter-spacing: .08em; transform: translateY(0); } }
     .header-title { 
-      font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.8rem); 
+      font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); 
       font-weight: 700; color: var(--header-title); text-transform: uppercase; 
       line-height: 1.15; cursor: default; user-select: none; text-shadow: var(--header-shadow); position: relative; z-index: 1;
       animation: titleReveal 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
     .header-subtitle { 
       font-family: 'Cinzel', serif; font-size: .7rem; color: var(--accent-gold); 
-      margin-top: 12px; letter-spacing: .25em; text-transform: uppercase; font-weight: 700; position: relative; z-index: 1;
+      margin-top: 10px; letter-spacing: .25em; text-transform: uppercase; font-weight: 700; position: relative; z-index: 1;
     }
 
     /* BARRA DE CONTROLES STICKY */
@@ -472,6 +516,7 @@
     /* SKELETON ADAPTADO A TEMAS */
     .skeleton { background: linear-gradient(90deg, rgba(179,146,102,0.02) 25%, rgba(179,146,102,0.08) 50%, rgba(179,146,102,0.02) 75%); background-size: 400% 100%; animation: shimmer 1.5s infinite; }
     body.light-mode .skeleton { background: linear-gradient(90deg, rgba(0,0,0,0.02) 25%, rgba(179, 146, 102,0.06) 50%, rgba(0,0,0,0.02) 75%); }
+    body.theme-green .skeleton { background: linear-gradient(90deg, rgba(20,69,47,0.02) 25%, rgba(20,69,47,0.06) 50%, rgba(20,69,47,0.02) 75%); }
     body.theme-gray .skeleton { background: linear-gradient(90deg, rgba(0,0,0,0.02) 25%, rgba(100,116,139,0.06) 50%, rgba(0,0,0,0.02) 75%); }
     body.theme-blue .skeleton { background: linear-gradient(90deg, rgba(2,132,199,0.02) 25%, rgba(2,132,199,0.06) 50%, rgba(2,132,199,0.02) 75%); }
     body.theme-pink .skeleton { background: linear-gradient(90deg, rgba(219,39,119,0.02) 25%, rgba(219,39,119,0.06) 50%, rgba(219,39,119,0.02) 75%); }
@@ -650,6 +695,9 @@
     @media (max-width: 1200px) { #catalogGrid { grid-template-columns: repeat(6, 1fr); } }
     
     @media (max-width: 900px) {
+      header { padding: 30px 160px 20px; }
+      .header-logo { left: 20px; max-height: 60px; }
+      .header-status-wrapper { right: 20px; }
       #catalogGrid { grid-template-columns: repeat(4, 1fr); }
       .modal-wrapper { padding-top: 80px; justify-content: flex-start; }
       .modal-box { flex-direction: column; max-width: 560px; height: auto; overflow-y: visible; padding-right: 0;}
@@ -663,8 +711,9 @@
     }
     
     @media (max-width: 600px) {
-      header { padding: 20px 16px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-      .header-status-wrapper { position: static; flex-direction: row; justify-content: center; align-items: center; margin-bottom: 16px; width: 100%; }
+      header { padding: 20px 16px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: auto; }
+      .header-logo { position: static; transform: none; max-height: 58px; margin-bottom: 12px; }
+      .header-status-wrapper { position: static; transform: none; flex-direction: row; justify-content: center; align-items: center; margin-bottom: 14px; width: 100%; }
       .last-updated { font-size: 0.65rem; padding: 4px 10px; margin: 0; }
       .changelog-btn { font-size: 0.65rem; margin: 0; }
       .header-title { font-size: 1.6rem; }
@@ -771,11 +820,11 @@
 </div>
 
 <header>
+  <img class="header-logo" id="mainLogo" src="LOGO.png" onerror="if(this.dataset. triedImg!=='1'){this.dataset.triedImg='1';this.src='img/LOGO.png';}else{this.style.display='none';}" alt="Parque del Recuerdo" title="Logo"/>
   <div class="header-status-wrapper">
       <div class="last-updated" id="lastUpdatedBadge"></div>
       <button class="changelog-btn" onclick="openChangelogModal()">Últimas Actualizaciones</button>
   </div>
-  <img class="header-logo" id="mainLogo" src="img/LOGO.png" onerror="this.style.display='none'" alt="Parque del Recuerdo" title="Logo"/>
   <div class="header-title" title="Catálogo">STOCK ÁNFORAS, COFRES Y RELICARIOS</div>
   <div class="header-subtitle">Catálogo Interno de Inventario — Parque Américo Vespucio</div>
 </header>
@@ -998,8 +1047,8 @@
             <button class="modal-close" onclick="closeChangelogModal()" title="Cerrar">✕</button>
             <h2 class="modal-desc-large" style="margin-bottom: 24px;">Últimas Mejoras</h2>
             <ul class="changelog-list">
+                <li><strong>Nuevo Diseño de Cabecera y Tema Verde Pastel:</strong> Se integró el logo corporativo fijo a la izquierda y se sumó la nueva paleta de color Verde Pastel.</li>
                 <li><strong>Anti-Bloqueos (Rate Limit):</strong> Se eliminaron las múltiples peticiones simultáneas que causaban que GitHub bloqueara tu IP con el error "Rate limit exceeded".</li>
-                <li><strong>Botón Limpiar Restaurado:</strong> El botón "Limpiar" vuelve a servir como escáner. Al presionarlo, le dice al navegador que vuelva a buscar si subiste imágenes nuevas.</li>
                 <li><strong>Lógica Estricta de Fotos:</strong> Si un producto tiene Stock 0 y no tiene foto, se oculta completamente. Si tiene Stock (mayor a 0) pero aún no le subes foto, mostrará el sello "IMAGEN EN PREPARACIÓN".</li>
             </ul>
         </div>
@@ -1070,7 +1119,7 @@ function iniciarCargadorInteractivo() {
             const codigo = fotosSincronizacion[index];
             imgElement.src = `img_sin_fondo/${codigo}.png`;
             imgElement.onload = () => { imgElement.classList.add("loader-img-fade-in"); };
-            imgElement.onerror = () => { imgElement.src = `img/${codigo}.jpg`; };
+            imgElement.onerror = () => { imgElement.src = `LOGO.png`; };
             index = (index + 1) % fotosSincronizacion.length;
         }, 500); 
     };
@@ -1220,7 +1269,8 @@ window.handleImageFallback = function(imgEl, codigo, qty) {
         }
     } else {
         // REGLA 2: Stock > 0 Y Sin Foto -> Se muestra el Logo Translúcido + Letrero
-        imgEl.src = 'img/LOGO.png';
+        imgEl.onerror = function() { this.onerror = null; this.src = 'img/LOGO.png'; };
+        imgEl.src = 'LOGO.png';
         imgEl.className = 'loaded no-photo-placeholder';
         
         const wrap = imgEl.parentElement;
@@ -1253,8 +1303,8 @@ window.handleImageFallback = function(imgEl, codigo, qty) {
 };
 
 window.handleModalImageFallback = function(imgEl) {
-    imgEl.onerror = null;
-    imgEl.src = 'img/LOGO.png';
+    imgEl.onerror = function() { this.onerror = null; this.src = 'img/LOGO.png'; };
+    imgEl.src = 'LOGO.png';
     imgEl.style.opacity = '0.15';
     imgEl.style.filter = 'grayscale(100%)';
     imgEl.style.transform = 'scale(0.5)';
@@ -1298,7 +1348,7 @@ function renderRecentHistory() {
         item.className = 'recent-item';
         
         let imgSrc = `img_sin_fondo/${code}.png`;
-        let fallback = `onerror="this.onerror=null; this.src='img/LOGO.png'; this.style.opacity='0.3'; this.style.filter='grayscale(100%)';"`;
+        let fallback = `onerror="this.onerror=null; this.src='LOGO.png'; this.style.opacity='0.3'; this.style.filter='grayscale(100%)';"`;
         
         item.innerHTML = `<img src="${imgSrc}" ${fallback}/> <span>${code}</span>`;
         item.onclick = () => {
@@ -1366,7 +1416,7 @@ function generateCompareColumnHTML(code) {
     const cat = getCategory(p.codigo).label;
     
     let imgSrc = `img_sin_fondo/${p.codigo}.png`;
-    let fallback = `onerror="this.onerror=null; this.src='img/LOGO.png'; this.style.opacity='0.15'; this.style.filter='grayscale(100%)';"`;
+    let fallback = `onerror="this.onerror=null; this.src='LOGO.png'; this.style.opacity='0.15'; this.style.filter='grayscale(100%)';"`;
     
     return `
       <div class="compare-img-wrap"><img src="${imgSrc}" ${fallback}/></div>
@@ -1408,12 +1458,12 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// LOGICA DE ROTACIÓN DE TEMAS
-const themes = ['dark', 'light', 'theme-gray', 'theme-blue', 'theme-pink'];
+// LOGICA DE ROTACIÓN DE TEMAS (6 PALETAS)
+const themes = ['dark', 'light', 'theme-green', 'theme-gray', 'theme-blue', 'theme-pink'];
 let currentThemeIndex = 0;
 
 function applyThemeClass(themeName) {
-    document.body.classList.remove('light-mode', 'theme-gray', 'theme-blue', 'theme-pink');
+    document.body.classList.remove('light-mode', 'theme-green', 'theme-gray', 'theme-blue', 'theme-pink');
     if (themeName === 'light') {
         document.body.classList.add('light-mode');
     } else if (themeName !== 'dark') {
@@ -1757,6 +1807,9 @@ function updateGridDOM(append) {
     const pcoQty = p.cantidadPCO || 0;
     const totalQty = pavQty + pcoQty;
     
+    // REGLA DE LA LISTA NEGRA: Ocultar si sabemos que no tiene foto y su stock es 0
+    if (window.invalidImageCodes.has(p.codigo) && totalQty === 0) return false;
+    
     if (bodegaVal === 'pav') {
         if (currentStockFilter === 'with' && pavQty === 0) return false;
         if (currentStockFilter === 'without' && pavQty > 0) return false;
@@ -1826,8 +1879,8 @@ function updateGridDOM(append) {
     let prepLabelHTML = '';
 
     if (window.invalidImageCodes.has(p.codigo)) {
-        imgSrc = 'img/LOGO.png';
-        fallbackAttr = ''; 
+        imgSrc = 'LOGO.png';
+        fallbackAttr = `onerror="this.onerror=null; this.src='img/LOGO.png';"`; 
         imgClass = 'no-photo-placeholder';
         prepLabelHTML = `<div class="prep-label">IMAGEN EN PREPARACIÓN</div>`;
     }
