@@ -1,6 +1,7 @@
 # 📊 Catálogo de Inventario Multi-Bodega (Integración ERP)
 
-*(Coloca aquí un GIF o captura de la vista principal del catálogo, idealmente mostrando el "Modo Cliente").*
+<img width="1906" height="845" alt="image" src="https://github.com/user-attachments/assets/0a25a887-b149-4d2b-b8e7-e42c2af7c795" />
+
 
 **Ecosistema web en tiempo real conectado a Microsoft Dynamics 365 Business Central para la visualización dinámica de stock de SKUs de alto valor.**
 
