@@ -19,5 +19,3 @@ Desarrollé una plataforma in-house a costo cero en licencias, que extrae, cruza
 * **Backend / Pipeline de Datos:** Google Apps Script, Google Sheets como base de datos intermedia.
 * **Automatización & ERP:** Microsoft Power Automate para la extracción automatizada de datos desde Microsoft Dynamics 365 Business Central.
 
-### 📸 Vistas del Sistema
-*(Agrega 2 capturas pequeñas: una de la vista técnica de inventario con códigos, y otra demostrando el cruce de stock PAV/PCO).*
